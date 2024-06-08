@@ -1,0 +1,27 @@
+﻿@page
+@model bookstore.Pages.Books.IndexModel
+@{
+    ViewData["Title"] = "Bookster. | Browse";
+}
+
+<h1>What are you looking for?</h1>
+@foreach (var book in Model.Book)
+{
+    <div>
+        <img src="@book.ImageUrl" alt="Book Cover" width="140" height="200"/>
+        <h3>@book.Title</h3>
+        <p>@book.Author</p>
+        <p>Price: @book.Price</p>
+        <form method="post" asp-page-handler="AddToCart" asp-route-bookId="@book.BookId">
+            <button class="button-1" type="submit">Add to Cart</button>
+        </form>
+
+        <form method="post" asp-page-handler="Like" asp-route-bookId="@book.BookId">
+            <button class="button-1" type="submit">Like</button>
+        </form>
+        <p>Likes: @book.Likes</p>
+    </div>
+    <br>
+    <br>
+}
+
