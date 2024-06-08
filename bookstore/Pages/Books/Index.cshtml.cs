@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using bookstore.Data;
 using bookstore.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
 
 namespace bookstore.Pages.Books
 {
@@ -40,6 +41,7 @@ namespace bookstore.Pages.Books
                 books = books.Where(s => s.Title.Contains(SearchString));
             }
 
+
             Book = await books.ToListAsync();
         }
 
@@ -53,6 +55,48 @@ namespace bookstore.Pages.Books
             }
 
             book.Likes = (book.Likes ?? 0) + 1;
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage();
+        }
+        public async Task<IActionResult> OnPostAddToCartAsync(int bookId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var cart = await _context.Carts.Include(c => c.CartItems)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (cart == null)
+            {
+                cart = new Cart
+                {
+                    UserId = userId,
+                    CartItems = new List<CartItem>()
+                };
+                _context.Carts.Add(cart);
+            }
+
+            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.BookId == bookId);
+
+            if (cartItem == null)
+            {
+                cartItem = new CartItem
+                {
+                    BookId = bookId,
+                    Quantity = 1
+                };
+                cart.CartItems.Add(cartItem);
+            }
+            else
+            {
+                cartItem.Quantity++;
+            }
+
             await _context.SaveChangesAsync();
 
             return RedirectToPage();

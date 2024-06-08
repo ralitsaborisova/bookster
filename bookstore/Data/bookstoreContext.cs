@@ -17,6 +17,9 @@ namespace bookstore.Data
         }
 
         public DbSet<bookstore.Models.Book> Books { get; set; } = default!;
+        public DbSet<UserBookLike> UserBookLikes { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
     }
 }
 

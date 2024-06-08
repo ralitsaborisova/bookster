@@ -15,11 +15,15 @@
         <form method="post" asp-page-handler="AddToCart" asp-route-bookId="@book.BookId">
             <button class="button-1" type="submit">Add to Cart</button>
         </form>
-
-        <form method="post" asp-page-handler="Like" asp-route-bookId="@book.BookId">
-            <button class="button-1" type="submit">Like</button>
-        </form>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <form method="post" asp-page-handler="Like" asp-route-bookId="@book.BookId">
+                <button class="button-1" type="submit">Like</button>
+            </form>
+        }
+        
         <p>Likes: @book.Likes</p>
+        
     </div>
     <br>
     <br>
