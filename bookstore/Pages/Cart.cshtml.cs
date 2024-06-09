@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using bookstore.Data;
 using bookstore.Models;
 using System.Security.Claims;
+using System.Collections.Generic;
 
 namespace bookstore.Pages
 {
@@ -18,7 +19,7 @@ namespace bookstore.Pages
             _context = context;
         }
 
-        public List<CartItem> CartItems { get; set; }
+        public List<CartItem> CartItems { get; set; } = new List<CartItem>();
         public decimal CartTotal { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
@@ -42,11 +43,12 @@ namespace bookstore.Pages
             else
             {
                 CartItems = cart.CartItems.ToList();
-                CartTotal = CartItems.Sum(ci => (ci.Book.Price ?? 0)* ci.Quantity);
+                CartTotal = CartItems.Sum(ci => (ci.Book.Price ?? 0) * ci.Quantity);
             }
 
             return Page();
         }
+
         public async Task<IActionResult> OnPostAddToCartAsync(int bookId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -85,6 +87,27 @@ namespace bookstore.Pages
             }
 
             await _context.SaveChangesAsync();
+
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostRemoveFromCartAsync(int cartItemId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var cartItem = await _context.CartItems
+                .Include(ci => ci.Cart)
+                .FirstOrDefaultAsync(ci => ci.Id == cartItemId && ci.Cart.UserId == userId);
+
+            if (cartItem != null)
+            {
+                _context.CartItems.Remove(cartItem);
+                await _context.SaveChangesAsync();
+            }
 
             return RedirectToPage();
         }
