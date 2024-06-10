@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using bookstore.Data;
 using bookstore.Models;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using bookstore.Services;
+
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +43,9 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred seeding the DB.");
     }
 }
+
+//builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

@@ -1,10 +1,11 @@
 ﻿@page
-@model bookstore.Pages.Account.ProfileModel
+@model bookstore.Areas.Identity.Pages.Account.ProfileModel
 @{
     ViewData["Title"] = "Profile";
 }
 
 <h1>@ViewData["Title"]</h1>
+<p>Welcome, @Model.Name</p>
 
 <div>
     <h3>Your Profile</h3>

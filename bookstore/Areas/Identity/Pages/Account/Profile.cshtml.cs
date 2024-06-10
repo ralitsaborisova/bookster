@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using bookstore.Models;
 using Microsoft.AspNetCore.Authorization;
 
-namespace bookstore.Pages.Account
+namespace bookstore.Areas.Identity.Pages.Account
 {
-    [Authorize] // This line ensures that only authenticated users can access this page
+    [Authorize]
     public class ProfileModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
