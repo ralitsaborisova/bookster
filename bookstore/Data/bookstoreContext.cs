@@ -20,6 +20,25 @@ namespace bookstore.Data
         public DbSet<UserBookLike> UserBookLikes { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<UserBookLike>()
+                .HasIndex(ubl => new { ubl.UserId, ubl.BookId })
+                .IsUnique();
+
+            builder.Entity<UserBookLike>()
+                .HasOne(ubl => ubl.User)
+                .WithMany(u => u.UserBookLikes)
+                .HasForeignKey(ubl => ubl.UserId);
+
+            builder.Entity<UserBookLike>()
+                .HasOne(ubl => ubl.Book)
+                .WithMany(b => b.UserBookLikes)
+                .HasForeignKey(ubl => ubl.BookId);
+        }
     }
 }
 

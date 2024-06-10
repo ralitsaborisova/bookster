@@ -9,19 +9,26 @@ using bookstore.Data;
 using bookstore.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace bookstore.Pages.Books
 {
     public class IndexModel : PageModel
     {
         private readonly bookstore.Data.bookstoreContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public IndexModel(bookstore.Data.bookstoreContext context)
+        public IndexModel(bookstore.Data.bookstoreContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public IList<Book> Book { get;set; } = default!;
+        public List<UserBookLike> UserLikes { get; set; } = new List<UserBookLike>();
+        public HashSet<int> LikedBooks { get; set; } = new HashSet<int>();
+
+
 
         [BindProperty(SupportsGet = true)]
         public string? SearchString { get; set; }
@@ -43,29 +50,61 @@ namespace bookstore.Pages.Books
 
 
             Book = await books.ToListAsync();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var userId = _userManager.GetUserId(User);
+                UserLikes = await _context.UserBookLikes
+                    .Where(ubl => ubl.UserId == userId)
+                    .ToListAsync();
+            }
         }
 
         public async Task<IActionResult> OnPostLikeAsync(int bookId)
         {
-            var book = await _context.Books.FindAsync(bookId);
+            var userId = _userManager.GetUserId(User);
 
-            if (book == null)
+            if (userId == null)
             {
-                return NotFound();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
-            book.Likes = (book.Likes ?? 0) + 1;
+            var like = await _context.UserBookLikes
+                .FirstOrDefaultAsync(ub => ub.UserId == userId && ub.BookId == bookId);
+
+            if (like == null)
+            {
+                // User hasn't liked this book before, so add the like
+                _context.UserBookLikes.Add(new UserBookLike
+                {
+                    UserId = userId,
+                    BookId = bookId
+                });
+
+                var book = await _context.Books.FindAsync(bookId);
+                book.Likes++;
+            }
+            else
+            {
+                // User has already liked this book, so remove the like
+                _context.UserBookLikes.Remove(like);
+
+                var book = await _context.Books.FindAsync(bookId);
+                book.Likes--;
+            }
+
             await _context.SaveChangesAsync();
 
             return RedirectToPage();
         }
+
         public async Task<IActionResult> OnPostAddToCartAsync(int bookId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (userId == null)
             {
-                return Unauthorized();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
             var cart = await _context.Carts.Include(c => c.CartItems)
