@@ -25,10 +25,6 @@ namespace bookstore.Pages
         public async Task<IActionResult> OnGetAsync()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
 
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
