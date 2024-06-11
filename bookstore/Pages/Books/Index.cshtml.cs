@@ -41,22 +41,20 @@ namespace bookstore.Pages.Books
 
         public async Task OnGetAsync()
         {
-            var books = from b in _context.Books
-                         select b;
+            var books = from b in _context.Books select b;
+
             if (!string.IsNullOrEmpty(SearchString))
             {
                 books = books.Where(s => s.Title.Contains(SearchString));
             }
-
 
             Book = await books.ToListAsync();
 
             if (User.Identity.IsAuthenticated)
             {
                 var userId = _userManager.GetUserId(User);
-                UserLikes = await _context.UserBookLikes
-                    .Where(ubl => ubl.UserId == userId)
-                    .ToListAsync();
+                UserLikes = await _context.UserBookLikes.Where(ubl => ubl.UserId == userId).ToListAsync();
+                LikedBooks = UserLikes.Select(ul => ul.BookId).ToHashSet();
             }
         }
 

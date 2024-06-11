@@ -12,6 +12,7 @@
         <h3>@book.Title</h3>
         <p>@book.Author</p>
         <p>Price: @book.Price</p>
+        <p>About: @book.Description</p>
         <form method="post" asp-page-handler="AddToCart" asp-route-bookId="@book.BookId">
             <button class="button-1" type="submit">Add to Cart</button>
         </form>

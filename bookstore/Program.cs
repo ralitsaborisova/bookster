@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using bookstore.Services;
 
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

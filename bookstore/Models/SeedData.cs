@@ -60,6 +60,33 @@ namespace bookstore.Models
                         ImageUrl = "/img/oldman.jpg",
                         ReleaseDate = DateTime.Parse("1945-01-20"),
                         Description = "This short novel, already a modern classic, is the superbly told, tragic story of a Cuban fisherman in the Gulf Stream and the giant Marlin he kills and loses—specifically referred to in the citation accompanying the author's Nobel Prize for literature in 1954."
+                    },
+                    new Book
+                    {
+                        Title = "Chip War",
+                        Author = "Chris Miller",
+                        Price = 21,
+                        ImageUrl = "/img/chipwar.jpg",
+                        ReleaseDate = DateTime.Parse("2022-01-20"),
+                        Description = "The fight for the world's most critical technology."
+                    },
+                    new Book
+                    {
+                        Title = "The Three Body Problem",
+                        Author = "Cixin Liu",
+                        Price = 19,
+                        ImageUrl = "/img/threebody.jpg",
+                        ReleaseDate = DateTime.Parse("2015-03-20"),
+                        Description = "."
+                    },
+                    new Book
+                    {
+                        Title = "Zorba The Greek",
+                        Author = "Nikos Kazandzakhis",
+                        Price = 15,
+                        ImageUrl = "/img/zorba.jpg",
+                        ReleaseDate = DateTime.Parse("1932-07-19"),
+                        Description = "."
                     }
                 );
                 context.SaveChanges();
